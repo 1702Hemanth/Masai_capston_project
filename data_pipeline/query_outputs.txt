@@ -1,0 +1,152 @@
+
+======================================================================
+Query 1 - Books with rating 5
+======================================================================
+
+SQL:
+SELECT title, price_gbp, rating
+            FROM books
+            WHERE rating = 5;
+
+OUTPUT:
+['title', 'price_gbp', 'rating']
+('Sapiens: A Brief History of Humankind', 54.23, 5)
+('Set Me Free', 17.46, 5)
+("Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)", 52.29, 5)
+('Rip it Up and Start Again', 35.02, 5)
+('Chase Me (Paris Nights #2)', 25.27, 5)
+('Black Dust', 34.53, 5)
+('Worlds Elsewhere: Journeys Around Shakespeareâ\x80\x99s Globe', 40.3, 5)
+('The Four Agreements: A Practical Guide to Personal Freedom', 17.66, 5)
+('The Elephant Tree', 23.82, 5)
+("Sophie's World", 15.94, 5)
+('Private Paris (Private #10)', 47.61, 5)
+('#HigherSelfie: Wake Up Your Life. Free Your Soul. Find Your Tribe.', 23.11, 5)
+('We Love You, Charlie Freeman', 50.27, 5)
+('Thirst', 17.27, 5)
+("The Activist's Tao Te Ching: Ancient Advice for a Modern Revolution", 32.24, 5)
+('Princess Jellyfish 2-in-1 Omnibus, Vol. 01 (Princess Jellyfish 2-in-1 Omnibus #1)', 13.61, 5)
+('Princess Between Worlds (Wide-Awake Princess #5)', 13.34, 5)
+('Join', 35.67, 5)
+
+======================================================================
+Query 2 - Top 10 most expensive books
+======================================================================
+
+SQL:
+SELECT title, price_gbp
+            FROM books
+            ORDER BY price_gbp DESC
+            LIMIT 10;
+
+OUTPUT:
+['title', 'price_gbp']
+('The Death of Humanity: and the Case for Life', 58.11)
+('Slow States of Collapse: Poems', 57.31)
+('Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991', 57.25)
+('The Past Never Ends', 56.5)
+('The Pioneer Woman Cooks: Dinnertime: Comfort Classics, Freezer Food, 16-Minute Meals, and Other Delicious Ways to Solve Supper!', 56.41)
+('Masks and Shadows', 56.4)
+('The Secret of Dreadwillow Carse', 56.13)
+('The Electric Pencil: Drawings from Inside State Hospital No. 3', 56.06)
+('Birdsong: A Story in Pictures', 54.64)
+('Sapiens: A Brief History of Humankind', 54.23)
+
+======================================================================
+Query 3 - Distinct ratings
+======================================================================
+
+SQL:
+SELECT DISTINCT rating
+            FROM books
+            ORDER BY rating;
+
+OUTPUT:
+['rating']
+(1,)
+(2,)
+(3,)
+(4,)
+(5,)
+
+======================================================================
+Query 4 - Books priced between £20 and £30
+======================================================================
+
+SQL:
+SELECT title, price_gbp, rating
+            FROM books
+            WHERE price_gbp BETWEEN 20 AND 30
+            ORDER BY price_gbp;
+
+OUTPUT:
+['title', 'price_gbp', 'rating']
+("Shakespeare's Sonnets", 20.66, 4)
+('In the Country We Love: My Family Divided', 22.0, 4)
+('The Requiem Red', 22.65, 1)
+('#HigherSelfie: Wake Up Your Life. Free Your Soul. Find Your Tribe.', 23.11, 5)
+('The Elephant Tree', 23.82, 5)
+('Olio', 23.88, 1)
+('Saga, Volume 6 (Saga (Collected Editions) #6)', 25.02, 3)
+('Chase Me (Paris Nights #2)', 25.27, 5)
+('Unbound: How Eight Technologies Made Us Human, Transformed Society, and Brought Our World to the Brink', 25.52, 1)
+('Reasons to Stay Alive', 26.41, 2)
+
+======================================================================
+Query 5 - Books from selected categories
+======================================================================
+
+SQL:
+SELECT title, category_id
+            FROM books
+            WHERE category_id IN (1, 2, 3);
+
+OUTPUT:
+['title', 'category_id']
+('A Light in the Attic', 1)
+('Tipping the Velvet', 2)
+('Soumission', 3)
+('The Black Maria', 1)
+("Shakespeare's Sonnets", 1)
+('Olio', 1)
+("You can't bury them all: Poems", 1)
+('Slow States of Collapse: Poems', 1)
+('Private Paris (Private #10)', 3)
+('We Love You, Charlie Freeman', 3)
+('Untitled Collection: Sabbath Poems 2014', 1)
+('Thirst', 3)
+('The Murder That Never Was (Forensic Instincts #5)', 3)
+
+======================================================================
+Query 6 - Books with category names
+======================================================================
+
+SQL:
+SELECT
+                b.title,
+                b.price_gbp,
+                b.rating,
+                c.category_name
+            FROM books b
+            JOIN categories c
+                ON b.category_id = c.category_id
+            ORDER BY b.price_gbp DESC
+            LIMIT 15;
+
+OUTPUT:
+['title', 'price_gbp', 'rating', 'category_name']
+('The Death of Humanity: and the Case for Life', 58.11, 4, 'Philosophy')
+('Slow States of Collapse: Poems', 57.31, 3, 'Poetry')
+('Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991', 57.25, 3, 'Music')
+('The Past Never Ends', 56.5, 4, 'Mystery')
+('The Pioneer Woman Cooks: Dinnertime: Comfort Classics, Freezer Food, 16-Minute Meals, and Other Delicious Ways to Solve Supper!', 56.41, 1, 'Food and Drink')
+('Masks and Shadows', 56.4, 2, 'Fantasy')
+('The Secret of Dreadwillow Carse', 56.13, 1, 'Childrens')
+('The Electric Pencil: Drawings from Inside State Hospital No. 3', 56.06, 1, 'Nonfiction')
+('Birdsong: A Story in Pictures', 54.64, 3, 'Childrens')
+('Sapiens: A Brief History of Humankind', 54.23, 5, 'History')
+('The Murder That Never Was (Forensic Instincts #5)', 54.11, 3, 'Fiction')
+('Tipping the Velvet', 53.74, 1, 'Historical Fiction')
+("Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)", 52.29, 5, 'Sequential Art')
+('Behind Closed Doors', 52.22, 4, 'Thriller')
+('The Black Maria', 52.15, 1, 'Poetry')
