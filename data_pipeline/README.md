@@ -46,3 +46,10 @@ From the project root:
 ```bash
 pip install -r requirements.txt
 
+## End-to-End Execution
+
+The complete data pipeline can be executed using:
+
+python data_pipeline/run_pipeline.py
+
+This runs scraping, cleaning, database creation, SQL queries, and pandas validation sequentially.
