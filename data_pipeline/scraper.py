@@ -1,6 +1,8 @@
 import requests
+import time
 from bs4 import BeautifulSoup
 import pandas as pd
+from pathlib import Path
 
 
 BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
@@ -15,6 +17,9 @@ RATING_MAP = {
 
 GBP_TO_INR = 105.50
 
+BASE_DIR = Path(__file__).resolve().parent
+OUTPUT_FILE = BASE_DIR / "cleaned_books.csv"
+
 
 def scrape_books():
     """
@@ -28,8 +33,6 @@ def scrape_books():
         url = BASE_URL.format(page)
 
         response = requests.get(url, timeout=10)
-
-        # Check whether the request was successful
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -49,10 +52,9 @@ def scrape_books():
             star_rating = rating_element.get("class")[1]
 
             # Availability
-            availability = book.select_one(".availability").get_text(
-                " ",
-                strip=True
-            )
+            availability = book.select_one(
+                ".availability"
+            ).get_text(" ", strip=True)
 
             # Category
             category = get_category(book)
@@ -64,80 +66,154 @@ def scrape_books():
                 "availability": availability,
                 "category": category
             })
+            time.sleep(0.2)  # Be polite and avoid overwhelming the server
 
     return pd.DataFrame(books)
 
-
 def get_category(book):
     """
-    Extract category information from the book listing.
-
-    The category is obtained from the book's detail page.
+    Extract the actual category from the book detail page.
+    Uses a persistent session and retries temporary network failures.
     """
 
     book_link = book.h3.a["href"]
 
-    # Convert relative URL into a usable URL
     if book_link.startswith("../"):
-        book_link = book_link.replace("../", "")
+        book_link = book_link.replace("../", "", 1)
 
     detail_url = "https://books.toscrape.com/catalogue/" + book_link
 
-    response = requests.get(detail_url, timeout=10)
-    response.raise_for_status()
+    # Valid categories from Books to Scrape
+    VALID_CATEGORIES = {
+        "Art", "Biography", "Business", "Childrens",
+        "Christian", "Contemporary", "Crime", "Fantasy",
+        "Fiction", "Food and Drink", "Health",
+        "Historical Fiction", "History", "Horror", "Humor",
+        "Music", "Mystery", "New Adult", "Nonfiction",
+        "Paranormal", "Parenting", "Philosophy", "Poetry",
+        "Politics", "Psychology", "Religion", "Romance",
+        "Science", "Science Fiction", "Self Help",
+        "Sequential Art", "Short Stories", "Spirituality",
+        "Sports and Games", "Thriller", "Travel", "Young Adult"
+    }
 
-    soup = BeautifulSoup(response.text, "html.parser")
+    # Use a persistent session
+    session = requests.Session()
 
-    breadcrumb = soup.select("ul.breadcrumb li a")
+    for attempt in range(5):
 
-    if len(breadcrumb) >= 3:
-        return breadcrumb[2].get_text(strip=True)
+        try:
+            response = session.get(
+                detail_url,
+                timeout=(10, 60)
+            )
+
+            response.raise_for_status()
+
+            soup = BeautifulSoup(
+                response.text,
+                "html.parser"
+            )
+
+            breadcrumb_items = soup.select(
+                "ul.breadcrumb > li"
+            )
+
+            # Search the breadcrumb for a VALID category
+            for item in breadcrumb_items:
+
+                text = item.get_text(
+                    strip=True
+                )
+
+                if text in VALID_CATEGORIES:
+                    return text
+
+            return "Unknown"
+
+        except requests.RequestException as error:
+
+            print(
+                f"Category request failed "
+                f"(attempt {attempt + 1}/5): "
+                f"{detail_url}"
+            )
 
     return "Unknown"
-
 
 def clean_books(df):
     """
     Clean scraped book data and create properly typed columns.
+    Rows with unparsable categories will be dropped.
     """
 
-    # Convert price from £51.77 → 51.77
+    before=len(df)
+    df=df[df["category"]!="Unknown"].copy()
+    dropped=before-len(df)
+
+    print(f"Dropped {dropped} rows with unknown categories.")
+    print(f"Remaining rows: {len(df)}")
+
+    # -----------------------------
+    # Clean price
+    # -----------------------------
+
     df["price_gbp"] = (
         df["price"]
+        .astype(str)
         .str.replace("£", "", regex=False)
         .str.replace("Â", "", regex=False)
-        .astype(float)
+        .str.strip()
     )
-# Convert to numeric, coercing errors to NaN
-    df["price_gdp"]=pd.to_numeric(
-        df["price_gbp"],
-        errors='coerce')  
 
-    # Convert One/Two/Three/Four/Five → 1/2/3/4/5
+    df["price_gbp"] = pd.to_numeric(
+        df["price_gbp"],
+        errors="coerce"
+    )
+
+    # Median imputation for invalid prices
+    if df["price_gbp"].isna().any():
+
+        median_price = df["price_gbp"].median()
+
+        df["price_gbp"] = df["price_gbp"].fillna(median_price)
+
+    # -----------------------------
+    # Clean rating
+    # -----------------------------
+
     df["rating"] = df["star_rating"].map(RATING_MAP)
 
-    # Convert availability text to boolean
+    # Median imputation for unexpected ratings
+    if df["rating"].isna().any():
+
+        median_rating = df["rating"].median()
+
+        df["rating"] = df["rating"].fillna(median_rating)
+
+    df["rating"] = (
+        df["rating"]
+        .round()
+        .astype(int)
+    )
+
+    # -----------------------------
+    # Clean availability
+    # -----------------------------
+
     df["in_stock"] = df["availability"].str.contains(
         "In stock",
         case=False,
         na=False
     )
 
-    # Handle unexpected rating values
-    if df["rating"].isna().any():
-        median_rating = df["rating"].median()
-        df["rating"] = df["rating"].fillna(median_rating)
+    # -----------------------------
+    # Fixed GBP → INR conversion
+    # -----------------------------
 
-    # Convert rating to integer
-    df["rating"] = df["rating"].round().astype(int)
-
-    # Handle unexpected price values
-    if df["price_gbp"].isna().any():
-        median_price = df["price_gbp"].median()
-        df["price_gbp"] = df["price_gbp"].fillna(median_price)
-
-    # Required fixed conversion
-    df["price_inr"] = df["price_gbp"] * GBP_TO_INR
+    df["price_inr"] = (
+        df["price_gbp"] * GBP_TO_INR
+    )
 
     return df
 
@@ -164,11 +240,14 @@ def main():
     print("\nCategories:")
     print(df["category"].unique())
 
-    # Save intermediate cleaned data
-    df.to_csv("data_pipeline/cleaned_books.csv", index=False)
+    # Save cleaned dataset
+    df.to_csv(
+        OUTPUT_FILE,
+        index=False
+    )
 
     print("\nCleaned dataset saved to:")
-    print("data_pipeline/cleaned_books.csv")
+    print(OUTPUT_FILE)
 
 
 if __name__ == "__main__":

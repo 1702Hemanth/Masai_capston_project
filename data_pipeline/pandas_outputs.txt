@@ -1,0 +1,51 @@
+=== pd.read_sql() - Rating Query ===
+                                                              title  price_gbp  rating
+                              Sapiens: A Brief History of Humankind      54.23       5
+            Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)      52.29       5
+                                       We Love You, Charlie Freeman      50.27       5
+                                        Private Paris (Private #10)      47.61       5
+            Worlds Elsewhere: Journeys Around Shakespeareâs Globe      40.30       5
+                                                               Join      35.67       5
+                                          Rip it Up and Start Again      35.02       5
+                                                         Black Dust      34.53       5
+The Activist's Tao Te Ching: Ancient Advice for a Modern Revolution      32.24       5
+                                         Chase Me (Paris Nights #2)      25.27       5
+
+=== pd.read_sql() - JOIN Result ===
+                                                                                                                          title  price_gbp  rating      category_name
+                                                                                   The Death of Humanity: and the Case for Life      58.11       4         Philosophy
+                                                                                                 Slow States of Collapse: Poems      57.31       3             Poetry
+                                             Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991      57.25       3              Music
+                                                                                                            The Past Never Ends      56.50       4            Mystery
+The Pioneer Woman Cooks: Dinnertime: Comfort Classics, Freezer Food, 16-Minute Meals, and Other Delicious Ways to Solve Supper!      56.41       1     Food and Drink
+                                                                                                              Masks and Shadows      56.40       2            Fantasy
+                                                                                                The Secret of Dreadwillow Carse      56.13       1          Childrens
+                                                                 The Electric Pencil: Drawings from Inside State Hospital No. 3      56.06       1         Nonfiction
+                                                                                                  Birdsong: A Story in Pictures      54.64       3          Childrens
+                                                                                          Sapiens: A Brief History of Humankind      54.23       5            History
+                                                                              The Murder That Never Was (Forensic Instincts #5)      54.11       3            Fiction
+                                                                                                             Tipping the Velvet      53.74       1 Historical Fiction
+                                                                        Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)      52.29       5     Sequential Art
+                                                                                                            Behind Closed Doors      52.22       4           Thriller
+                                                                                                                The Black Maria      52.15       1             Poetry
+
+=== pd.merge() - JOIN Result ===
+                                                                                                                          title  price_gbp  rating      category_name
+                                                                                   The Death of Humanity: and the Case for Life      58.11       4         Philosophy
+                                                                                                 Slow States of Collapse: Poems      57.31       3             Poetry
+                                             Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991      57.25       3              Music
+                                                                                                            The Past Never Ends      56.50       4            Mystery
+The Pioneer Woman Cooks: Dinnertime: Comfort Classics, Freezer Food, 16-Minute Meals, and Other Delicious Ways to Solve Supper!      56.41       1     Food and Drink
+                                                                                                              Masks and Shadows      56.40       2            Fantasy
+                                                                                                The Secret of Dreadwillow Carse      56.13       1          Childrens
+                                                                 The Electric Pencil: Drawings from Inside State Hospital No. 3      56.06       1         Nonfiction
+                                                                                                  Birdsong: A Story in Pictures      54.64       3          Childrens
+                                                                                          Sapiens: A Brief History of Humankind      54.23       5            History
+                                                                              The Murder That Never Was (Forensic Instincts #5)      54.11       3            Fiction
+                                                                                                             Tipping the Velvet      53.74       1 Historical Fiction
+                                                                        Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)      52.29       5     Sequential Art
+                                                                                                            Behind Closed Doors      52.22       4           Thriller
+                                                                                                                The Black Maria      52.15       1             Poetry
+
+=== Comparison ===
+SQL JOIN and pd.merge() equivalent: True
