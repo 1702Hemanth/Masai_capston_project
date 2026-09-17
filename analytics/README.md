@@ -27,7 +27,7 @@ The module covers:
 
 The Titanic dataset is loaded using Seaborn:
 
-```python
+python
 df = sns.load_dataset("titanic")
 The dataset is loaded once and immediately saved as:
 analytics/titanic.csv
@@ -39,7 +39,7 @@ Rows    : 889
 Columns : 14
 Part A — Exploratory Data Analysis
 
-3. Data Profiling
+## 3. Data Profiling
 
 The following profiling information is generated:
 - df.info()
@@ -56,7 +56,8 @@ Class	Count	Percentage
 
 The target variable is therefore moderately imbalanced, with non-survivors
 forming the larger class.
-4. Data Cleaning
+
+## 4. Data Cleaning
 Missing values were handled according to the percentage of missing values.
 Age
 Approximately 19.87% of Age values were missing.
@@ -77,7 +78,8 @@ Final Dataset
 After cleaning:
 Final shape = (889, 14)
 Missing values = 0
-5. Age and Fare Analysis
+
+## 5. Age and Fare Analysis
 Age Distribution
 An age histogram and boxplot were generated.
 The Age distribution is concentrated mainly around the adult passenger
@@ -118,7 +120,8 @@ indicates a positively/right-skewed Fare distribution.
 The calculated skewness coefficient is:
 4.8014
 This confirms strong positive skewness.
-6. Survival Analysis
+
+## 6. Survival Analysis
 Survival Rate by Sex
 The survival rates were calculated using boolean masking.
 Female = 74.04%
@@ -145,7 +148,8 @@ The combination of sex and passenger class provides more detailed
 information than either variable alone. Female passengers have higher
 observed survival rates within each passenger class, while third-class
 passengers have lower survival rates than passengers in higher classes.
-7. Correlation Analysis
+
+## 7. Correlation Analysis
 The required six numerical variables were used:
 survived
 pclass
@@ -176,7 +180,8 @@ with siblings/spouses tended also to have parents/children recorded in the
 dataset.
 A correlation heatmap is saved as:
 analytics/charts/correlation_heatmap.png
-8. Multivariate Visualizations
+
+## 8. Multivariate Visualizations
 Four distinct multivariate charts were generated.
 8.1 Survival by Sex and Passenger Class
 File:
@@ -208,7 +213,8 @@ The visualization compares survival across embarkation ports and sex.
 Differences between male and female survival rates remain visible across
 the embarkation groups, demonstrating interaction between categorical
 passenger characteristics.
-9. Standardization Sanity Check
+
+## 9. Standardization Sanity Check
 Age and Fare were standardized using the z-score transformation as an
 EDA-only sanity check.
 Age
@@ -230,7 +236,8 @@ zero and scales their standard deviation to approximately one.
 This transformation is an EDA sanity check. The final machine-learning
 models perform their own preprocessing through the training pipeline.
 Part B — Machine Learning Modeling
-10. Feature Selection
+
+## 10. Feature Selection
 The classification target is:
 survived
 The following features were selected:
@@ -243,7 +250,8 @@ fare
 embarked
 Redundant or leakage-prone columns such as alive were excluded from the
 modeling features.
-11. Stratified Train-Test Split
+
+## 11. Stratified Train-Test Split
 The data was divided into:
 Training samples = 711
 Testing samples  = 178
@@ -258,7 +266,8 @@ Survived     = 68  (38.20%)
 Stratification preserves approximately the same class proportions in the
 training and testing sets. This is important because the target contains
 two classes with an unequal distribution.
-12. Preprocessing Pipeline
+
+## 12. Preprocessing Pipeline
 Numerical features:
 age
 fare
@@ -279,7 +288,8 @@ One-Hot Encoding
 A ColumnTransformer and machine-learning Pipeline were used so that
 preprocessing is fitted using training data only.
 This avoids data leakage from the test set.
-13. Classification Models
+
+## 13. Classification Models
 Three initial classification models were trained:
 1. Logistic Regression
 2. Decision Tree
@@ -288,7 +298,8 @@ A Decision Tree visualization was generated with feature names and class
 names.
 File:
 analytics/charts/decision_tree.png
-14. Classification Model Evaluation
+
+## 14. Classification Model Evaluation
 The models were evaluated using:
 - Accuracy
 - Precision
@@ -306,7 +317,8 @@ Tuned Random Forest	0.8146	0.7869	0.7059	0.7442	0.8283
 
 ROC curves are saved as:
 analytics/charts/roc_curves.png
-15. Class Imbalance Analysis
+
+## 15. Class Imbalance Analysis
 The training dataset contains:
 Not Survived = 61.74%
 Survived     = 38.26%
@@ -334,7 +346,8 @@ This demonstrates the trade-off created by giving additional weight to the
 minority class.
 Comparison file:
 analytics/model/class_imbalance_comparison.csv
-16. Random Forest GridSearchCV
+
+## 16. Random Forest GridSearchCV
 GridSearchCV was used to tune the Random Forest.
 Parameters searched:
 n_estimators
@@ -361,7 +374,8 @@ F1 Score  = 0.7442
 ROC-AUC   = 0.8283
 The tuned Random Forest improves the test accuracy and F1 score compared
 with the untuned Random Forest.
-17. Multivariate Linear Regression — Fare
+
+## 17. Multivariate Linear Regression — Fare
 A multivariate linear regression model was developed to predict Fare.
 Features:
 pclass
@@ -383,14 +397,16 @@ Multivariate Linear Regression	21.1386	41.7465	0.3468	0.3118
 The R² value of 0.3468 indicates that the model explains approximately
 34.68% of the variation in Fare on the test data.
 The adjusted R² is 0.3118 after accounting for the number of predictors.
-18. Residual Analysis and Heteroscedasticity
+
+## 18. Residual Analysis and Heteroscedasticity
 Residual plot:
 analytics/charts/fare_regression_residuals.png
 The residuals show an increasing spread as predicted Fare increases, with
 several large positive residuals at higher predicted Fare values.
 The funnel-like pattern provides visual evidence of heteroscedasticity,
 meaning that the variance of the regression errors is not constant.
-19. Final Model Comparison
+
+## 19. Final Model Comparison
 Classification
 Model	Accuracy	Precision	Recall	F1	ROC-AUC
 Logistic Regression	0.8090	0.7833	0.6912	0.7344	0.8610
@@ -404,7 +420,7 @@ Model	MAE	RMSE	R²	Adjusted R²
 Multivariate Linear Regression	21.1386	41.7465	0.3468	0.3118
 
 
-20. Final Classifier Recommendation
+## 20. Final Classifier Recommendation
 Based on the measured test-set results, the Tuned Random Forest is selected
 as the final classifier for this project. It achieved an accuracy of
 0.8146, precision of 0.7869, recall of 0.7059, and F1 score of 0.7442.
@@ -413,7 +429,8 @@ F1 score of 0.7344, making it a strong alternative when probability
 discrimination is emphasized. The Tuned Random Forest was selected for the
 saved deployment pipeline because its test accuracy and F1 score were
 slightly higher than the other evaluated classifiers.
-21. Pipeline Saving and Reloading
+
+## 21. Pipeline Saving and Reloading
 The complete fitted preprocessing and Tuned Random Forest pipeline is
 saved using joblib.
 Saved pipeline:
@@ -433,7 +450,8 @@ Survival probability = 0.5739
 Because the preprocessing and estimator are stored together in the pipeline,
 raw input can be passed directly to the reloaded model without manually
 repeating the preprocessing steps.
-22. Generated Files
+
+## 22. Generated Files
 Python Scripts
 analytics/01_eda.py
 analytics/02_modeling.py
@@ -458,14 +476,16 @@ analytics/model/class_imbalance_comparison.csv
 analytics/model/final_classification_results.csv
 analytics/model/regression_results.csv
 analytics/model/titanic_survival_pipeline.joblib
-23. How to Run
+
+## 23. How to Run
 From the project root:
 python analytics/01_eda.py
 Then:
 python analytics/02_modeling.py
 The scripts generate the cleaned dataset, charts, evaluation tables,
 regression results, and saved machine-learning pipeline.
-24. Module Summary
+
+## 24. Module Summary
 This module demonstrates a complete analytics and machine-learning
 workflow, beginning with dataset profiling and cleaning and continuing
 through exploratory analysis, classification, imbalance handling,
@@ -478,3 +498,4 @@ The Fare regression model achieved an R² of 0.3468, with the residual plot
 showing visual evidence of heteroscedasticity.
 The final trained preprocessing and classification pipeline was successfully
 saved, reloaded, and us
+
