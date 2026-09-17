@@ -499,3 +499,21 @@ showing visual evidence of heteroscedasticity.
 The final trained preprocessing and classification pipeline was successfully
 saved, reloaded, and us
 
+## 25. Conclusion
+
+This module implements an end-to-end Titanic analytics and machine-learning
+workflow. The analysis includes data cleaning, exploratory analysis,
+multivariate visualization, correlation analysis, classification,
+class-imbalance evaluation, hyperparameter tuning, and regression.
+
+Among the tested classifiers, the Tuned Random Forest achieved a test
+accuracy of 0.8146 and F1 score of 0.7442, while Logistic Regression
+achieved a ROC-AUC of 0.8610.
+
+The multivariate Fare regression model achieved an R² of 0.3468 and
+Adjusted R² of 0.3118. The residual analysis showed visual evidence of
+heteroscedasticity.
+
+The final Tuned Random Forest preprocessing and classification pipeline
+was successfully saved using Joblib, reloaded, and used to generate a
+prediction from raw passenger data.
