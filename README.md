@@ -386,12 +386,12 @@ build could not be executed during development.
 
 ## Design Decisions
 
- # 1. SQLite for Module 1
+1. SQLite for Module 1
 
 SQLite was selected because it is lightweight, local, and sufficient for the
 structured dataset used in the data-pipeline module.
 
-# 2. Pandas for Data Processing
+2. Pandas for Data Processing
 
 Pandas provides convenient tools for:
 - Data cleaning
@@ -400,32 +400,32 @@ Pandas provides convenient tools for:
 - Statistical analysis
 - Data validation
 
-# 3. Scikit-learn Pipelines for Module 2
+3. Scikit-learn Pipelines for Module 2
 
 Preprocessing and estimators are combined into pipelines so that training
 transformations are applied consistently during prediction.
 
-# 4. Joblib for Model Persistence
+4. Joblib for Model Persistence
 
 Joblib is used to save and reload the complete fitted classification
 pipeline.
 
-# 5. ChromaDB for Module 3
+5. ChromaDB for Module 3
 
 ChromaDB provides local vector storage and similarity retrieval without
 requiring a hosted vector database.
 
-# 6. Sentence Transformers
+6. Sentence Transformers
 
 all-MiniLM-L6-v2 provides local embeddings without requiring an external
 embedding API.
 
-# 7. LangGraph
+7. LangGraph
 
 LangGraph provides explicit state-based orchestration and conditional
 routing between policy retrieval and direct-answer paths.
 
-# 8. Deterministic Mock Mode
+8. Deterministic Mock Mode
 
 The MOCK_LLM baseline makes the Support Assistant reproducible and
 completely offline.
