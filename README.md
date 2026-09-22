@@ -211,12 +211,24 @@ The models were evaluated using:
 - F1 Score
 - ROC-AUC
 - Confusion Matrix
-Class Imbalance
+### Class Imbalance
+
 The training data was analyzed for class imbalance.
-A majority-class baseline and balanced Logistic Regression were compared
-using precision, recall, and F1 score.
-Random Forest Tuning
-GridSearchCV was used to tune:
+
+Three imbalance strategies were evaluated:
+
+1. Majority-Class Baseline
+2. Logistic Regression with `class_weight="balanced"`
+3. Logistic Regression with SMOTE
+
+SMOTE was applied only to the training data through an
+imbalanced-learn pipeline. The test set remained untouched.
+
+The comparison was performed using accuracy, precision, recall, F1 score,
+and ROC-AUC where applicable.
+
+### GridSearchCV was used to tune:
+
 - n_estimators
 - max_depth
 - max_features
@@ -372,17 +384,38 @@ Response:
   "sources": [],
   "confidence": 1.0
 }
-Docker
+
+### Docker
+
 A Dockerfile is provided at:
+
 support_assistant/Dockerfile
-Build:
+
+Build the image from the project root:
+
+powershell
 docker build -t zepto-support-assistant ./support_assistant
-Run:
+Run the container:
 docker run --rm -p 7860:7860 zepto-support-assistant
-The container exposes port:
-7860
-Docker was not available in the development environment, so the Docker
-build could not be executed during development.
+The API is available at:
+http://127.0.0.1:7860
+The Docker image was successfully built and the container was successfully
+tested locally.
+The container exposes port 7860 and starts the FastAPI application using
+Uvicorn.
+The Docker build also prepares the local ChromaDB policy index so that the
+support assistant can run inside the container.
+
+---
+
+### 3. Add `analytics/requirements.txt` to the repository structure
+
+Your root README currently shows the analytics files but doesn't list the new dependency file. :chatgpt-content-reference{index="2"}
+
+Under:
+
+```text
+├── analytics/
 
 ## Design Decisions
 
