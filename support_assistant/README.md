@@ -498,20 +498,63 @@ The optional real-LLM path is not required for the graded baseline.
 ## 23. Docker
 
 A Dockerfile is included at:
+
 support_assistant/Dockerfile
-It uses Python 3.12 and starts the FastAPI application with:
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
-Build command
+
+The container uses Python 3.12 and starts the FastAPI application with:
+
+CMD ["uvicorn", "support_assistant.main:app", "--host", "0.0.0.0", "--port", "7860"]
+
+### Build Image
+
 From the project root:
+
 docker build -t zepto-support-assistant ./support_assistant
-Run command
+
+The image was successfully built locally as:
+
+zepto-support-assistant:latest
+
+### Run Container
+
+powershell
 docker run --rm -p 7860:7860 zepto-support-assistant
-The API should then be available at:
+The API is then available at:
 http://127.0.0.1:7860
-Docker was not available in the development environment at the time of
-implementation, so the local Docker build/run command could not be executed
-in that environment. The Dockerfile is included as the required local
-containerization configuration.
+Docker Verification
+The container was successfully started and the FastAPI service responded to
+API requests.
+The following endpoints were verified:
+GET /
+POST /ask
+The container was also tested with both a Zepto policy question and a general
+question. The expected deterministic MOCK_LLM responses were returned.
+The Docker image performs ingestion during the image build, so the ChromaDB
+policy index is available inside the container when it starts.
+
+### Also update Section 27
+
+Your current checklist says:
+
+> Docker build/run — Requires Docker installation :chatgpt-content-reference{index="2"}
+
+Change:
+
+text
+Dockerfile              Complete
+Docker build/run        Complete
+Architecture documentation  Complete
+
+### Optional Real-LLM Mode
+
+The application reserves `MOCK_LLM=0` for an optional real-LLM provider
+integration. The graded submission does not depend on this mode and no
+external API key is required or included in the repository.
+
+The fully implemented and tested submission path is the deterministic
+offline mode:
+
+MOCK_LLM unset or MOCK_LLM=1
 
 ## 24. Dependencies
 
