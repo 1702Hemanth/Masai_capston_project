@@ -5,7 +5,8 @@
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
-
+from imblearn.pipeline import Pipeline as ImbPipeline
+from imblearn.over_sampling import SMOTE
 # =====================================================================
 # LOAD CLEANED DATA
 # =====================================================================
@@ -499,6 +500,73 @@ balanced_logistic_pipeline = Pipeline(
 
 balanced_logistic_pipeline.fit(X_train, y_train)
 
+# ---------------------------------------------------------------------
+# SMOTE Logistic Regression
+# ---------------------------------------------------------------------
+
+smote_logistic_pipeline = ImbPipeline(
+    steps=[
+        ("preprocessor", preprocessor),
+        (
+            "smote",
+            SMOTE(
+                random_state=42
+            )
+        ),
+        (
+            "classifier",
+            LogisticRegression(
+                max_iter=1000,
+                random_state=42
+            )
+        )
+    ]
+)
+
+smote_logistic_pipeline.fit(X_train, y_train)
+
+smote_predictions = smote_logistic_pipeline.predict(X_test)
+
+smote_precision = precision_score(
+    y_test,
+    smote_predictions,
+    zero_division=0
+)
+
+smote_recall = recall_score(
+    y_test,
+    smote_predictions,
+    zero_division=0
+)
+
+smote_f1 = f1_score(
+    y_test,
+    smote_predictions,
+    zero_division=0
+)
+
+smote_accuracy = accuracy_score(
+    y_test,
+    smote_predictions
+)
+
+smote_probability = smote_logistic_pipeline.predict_proba(X_test)[:, 1]
+
+smote_auc = roc_auc_score(
+    y_test,
+    smote_probability
+)
+
+print("\n" + "-" * 60)
+print("SMOTE LOGISTIC REGRESSION")
+print("-" * 60)
+
+print(f"\nAccuracy : {smote_accuracy:.4f}")
+print(f"Precision: {smote_precision:.4f}")
+print(f"Recall   : {smote_recall:.4f}")
+print(f"F1 Score : {smote_f1:.4f}")
+print(f"ROC-AUC  : {smote_auc:.4f}")
+
 balanced_predictions = balanced_logistic_pipeline.predict(X_test)
 
 balanced_precision = precision_score(
@@ -567,7 +635,14 @@ imbalance_results = pd.DataFrame([
         "Precision": balanced_precision,
         "Recall": balanced_recall,
         "F1": balanced_f1
-    }
+    },
+    {
+    "Model": "SMOTE Logistic Regression",
+    "Accuracy": smote_accuracy,
+    "Precision": smote_precision,
+    "Recall": smote_recall,
+    "F1": smote_f1
+}
 ])
 
 print("\n" + "=" * 70)

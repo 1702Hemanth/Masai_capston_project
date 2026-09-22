@@ -318,33 +318,87 @@ Tuned Random Forest	0.8146	0.7869	0.7059	0.7442	0.8283
 ROC curves are saved as:
 analytics/charts/roc_curves.png
 
+
 ## 15. Class Imbalance Analysis
+
 The training dataset contains:
+
 Not Survived = 61.74%
+
 Survived     = 38.26%
-A majority-class baseline was created.
-Majority-Class Baseline
+
+Because the target classes are moderately imbalanced, three imbalance-handling
+approaches were evaluated in addition to the regular Logistic Regression model.
+
+### Majority-Class Baseline
+
+A majority-class baseline was created by always predicting the majority class.
+
 Accuracy  = 0.6180
 Precision = 0.0000
 Recall    = 0.0000
 F1 Score  = 0.0000
+
 The baseline demonstrates the performance obtained by always predicting
 the majority class.
-Balanced Logistic Regression
+
+### Balanced Logistic Regression
+
 A Logistic Regression model using:
+
 class_weight="balanced"
+
 was also trained.
+
 Results:
+
 Accuracy  = 0.7921
 Precision = 0.7183
 Recall    = 0.7500
 F1 Score  = 0.7338
+
 Compared with the regular Logistic Regression, the balanced model increases
 recall from 0.6912 to 0.7500 while reducing precision from 0.7833 to
 0.7183. The F1 score remains very similar, changing from 0.7344 to 0.7338.
+
 This demonstrates the trade-off created by giving additional weight to the
 minority class.
+
+### SMOTE Logistic Regression
+
+Synthetic Minority Over-sampling Technique (SMOTE) was also evaluated.
+
+SMOTE was applied **only to the training data** inside an imbalanced-learn
+pipeline:
+
+1. Training data preprocessing
+2. SMOTE oversampling
+3. Logistic Regression
+
+The test set was never oversampled, ensuring that evaluation was performed
+on the original unseen test distribution.
+
+Results:
+
+Accuracy  = 0.7978
+Precision = 0.7353
+Recall    = 0.7353
+F1 Score  = 0.7353
+ROC-AUC   = 0.8667
+
+The SMOTE experiment demonstrates how synthetic minority samples can be
+generated from the training fold while keeping the test set untouched.
+
+### Imbalance Comparison
+
+The three imbalance strategies required for comparison are therefore:
+
+1. Majority-Class Baseline
+2. Logistic Regression with `class_weight="balanced"`
+3. Logistic Regression with SMOTE applied only to the training data
+
 Comparison file:
+
 analytics/model/class_imbalance_comparison.csv
 
 ## 16. Random Forest GridSearchCV
@@ -415,20 +469,21 @@ Random Forest	0.7978	0.7581	0.6912	0.7231	0.8212
 Tuned Random Forest	0.8146	0.7869	0.7059	0.7442	0.8283
 
 
+
 Regression
 Model	MAE	RMSE	R²	Adjusted R²
 Multivariate Linear Regression	21.1386	41.7465	0.3468	0.3118
 
 
-## 20. Final Classifier Recommendation
-Based on the measured test-set results, the Tuned Random Forest is selected
-as the final classifier for this project. It achieved an accuracy of
-0.8146, precision of 0.7869, recall of 0.7059, and F1 score of 0.7442.
-Logistic Regression produced the highest ROC-AUC of 0.8610 and a similar
-F1 score of 0.7344, making it a strong alternative when probability
-discrimination is emphasized. The Tuned Random Forest was selected for the
-saved deployment pipeline because its test accuracy and F1 score were
-slightly higher than the other evaluated classifiers.
+## 20. Final Selected Classifier
+
+Based on the measured test-set results and the project's deployment
+requirement, the Tuned Random Forest is used as the final classifier for
+the saved pipeline. It achieved an accuracy of 0.8146, precision of
+0.7869, recall of 0.7059, and F1 score of 0.7442.
+
+Logistic Regression produced the highest ROC-AUC of 0.8610 at 0.8610,
+while the Tuned Random Forest produced an ROC-AUC of 0.8283.
 
 ## 21. Pipeline Saving and Reloading
 The complete fitted preprocessing and Tuned Random Forest pipeline is
